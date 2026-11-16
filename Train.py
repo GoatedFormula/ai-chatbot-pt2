@@ -21,7 +21,7 @@ checkpoint_file = "checkpoint.pt"
 prev_val_loss = float("inf")
 current_val_loss = float("-inf")
 
-with open("training_data.txt", 'r', encoding='utf-8') as f:
+with (open("training_data.txt", 'r', encoding='utf-8') as f):
     text = f.read()
 
 chars = sorted(list(set(text)))
@@ -60,20 +60,14 @@ def estimate_loss():
     return out
 
 def save_checkpoint(model, optimizer, iteration, train_loss, val_loss):
-    checkpoint = {
-        "model_state_dict": model.state_dict(),
-        "optimizer_state_dict": optimizer.state_dict(),
-        "iteration": iteration,
-        "train_loss": train_loss,
-        "val_loss": val_loss,
-    }
+    checkpoint = {"model_state_dict": model.state_dict() , "optimizer_state_dict": optimizer.state_dict() , "iteration": iteration , "train_loss": train_loss , "val_loss": val_loss}
 
     torch.save(checkpoint, checkpoint_file)
 
     print(f"Saved checkpoint at iteration {iteration}")
 
 def load_checkpoint(model, optimizer):
-    if not os.path.exists(checkpoint_file):
+    if (not os.path.exists(checkpoint_file)):
         print("No checkpoint found. Startint from scratch.")
         return 0
 
@@ -127,12 +121,7 @@ class MultiHeadAttention(nn.Module):
 class FeedFoward(nn.Module):
     def __init__(self, n_embd):
         super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(n_embd, 4 * n_embd),
-            nn.ReLU(),
-            nn.Linear(4 * n_embd, n_embd),
-            nn.Dropout(dropout),
-        )
+        self.net = nn.Sequential(nn.Linear(n_embd , 4 * n_embd) , nn.ReLU() , nn.Linear(4 * n_embd, n_embd) , nn.Dropout(dropout))
 
     def forward(self, x):
         return self.net(x)
@@ -170,7 +159,7 @@ class BigramLanguageModel(nn.Module):
         x = self.ln_f(x)
         logits = self.lm_head(x)
 
-        if targets is None:
+        if (targets is None):
             loss = None
         else:
             B, T, C = logits.shape
@@ -203,7 +192,7 @@ if __name__ == "__main__":
 
     while time.time() < end_time and current_val_loss < prev_val_loss:
 
-        if iter % eval_interval == 0:
+        if (iter % eval_interval == 0):
             losses = estimate_loss()
             prev_val_loss = current_val_loss
             current_val_loss = losses["val"]
